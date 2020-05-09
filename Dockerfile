@@ -80,10 +80,10 @@ COPY script/entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
 
-# bundle install
+# ユーザーをdevに変えてbundle install
 #COPY Gemfile* $APP_ROOT/
-#RUN chown -R dev:dev /usr/local/rbenv
-#RUN chown -R dev:dev $APP_ROOT
+RUN chown -R dev:dev ${APP_ROOT}
+RUN chown -R dev:dev ${RBENV_ROOT}
 USER dev
 #RUN bundle install
 #RUN rbenv rehash

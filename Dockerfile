@@ -46,13 +46,6 @@ RUN yum -y install \
   postgresql \
   postgresql-devel
 
-# ログインユーザーを作成
-RUN \
- useradd -m dev; \
- echo 'dev:dev' | chpasswd; \
- echo "dev ALL=NOPASSWD: ALL" >> /etc/sudoers
-RUN chown -R dev:dev /home/dev
-
 # rbenvとruby-buildインストール
 RUN git clone https://github.com/sstephenson/rbenv.git ${RBENV_ROOT}
 RUN git clone https://github.com/sstephenson/ruby-build.git ${RBENV_ROOT}/plugins/ruby-build
@@ -80,11 +73,8 @@ COPY script/entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
 
-# ユーザーをdevに変えてbundle install
+# bundle install
 #COPY Gemfile* $APP_PATH/
-RUN chown -R dev:dev ${APP_PATH}
-RUN chown -R dev:dev ${RBENV_ROOT}
-USER dev
 #RUN bundle install
 #RUN rbenv rehash
 

@@ -3,7 +3,8 @@
 # 概要
 このリポジトリは新しいRailsアプリケーションのDocker開発環境を構築するときに最低限必要なものを記載したもの。
 
-# 確認済みMWバージョン
+# バージョン
+- OS CentOS7
 - ruby 2.7.1
 - rails 6.0.4
 - PostgreSQL 12.2 
@@ -13,7 +14,7 @@
 - RUBY_VERSION
 - APP_NAME
 
-2. APP_NAMEに合わせて、docker-compose.ymlを変更する
+2. docker-compose.ymlのAPP_NAMEやPostgreSQLのバージョンを任意で変更する
 
 3. Railsアプリケーション用のコンテナの構築、作成、起動
 ```bash

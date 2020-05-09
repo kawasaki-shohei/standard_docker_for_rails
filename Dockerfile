@@ -3,7 +3,7 @@ FROM centos:centos7
 ENV RUBY_VERSION 2.7.1
 ENV APP_NAME sample_app
 ENV LANG C.UTF-8
-ENV APP_ROOT /usr/src/${APP_NAME}
+ENV APP_PATH /usr/src/${APP_NAME}
 # rbenvのpathを通す
 ENV RBENV_ROOT /usr/local/rbenv
 ENV PATH ${RBENV_ROOT}/shims:${RBENV_ROOT}/bin:${PATH}
@@ -73,7 +73,7 @@ RUN rbenv global ${RUBY_VERSION}
 RUN gem install bundler
 
 # アプリケーションソースコードのルートディレクトリへ移動
-WORKDIR ${APP_ROOT}
+WORKDIR ${APP_PATH}
 
 # entrypointのための処理
 COPY script/entrypoint.sh /usr/bin/
@@ -81,8 +81,8 @@ RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
 
 # ユーザーをdevに変えてbundle install
-#COPY Gemfile* $APP_ROOT/
-RUN chown -R dev:dev ${APP_ROOT}
+#COPY Gemfile* $APP_PATH/
+RUN chown -R dev:dev ${APP_PATH}
 RUN chown -R dev:dev ${RBENV_ROOT}
 USER dev
 #RUN bundle install

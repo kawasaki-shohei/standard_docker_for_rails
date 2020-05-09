@@ -24,8 +24,9 @@ $ docker-compose exec web bash
 4. Railsアプリケーションを作成する
 ```bash
 $ gem install rails
-$ rails new APP_NAME -d postgresql
+$ rails new ${APP_PATH} --database=postgresql --skip-keeps --force
 ```
+※`--force `オプションはREADME.mdと.gitignoreをオーバーライドするため。
 
 5. Railsアプリケーション起動
 ```bash

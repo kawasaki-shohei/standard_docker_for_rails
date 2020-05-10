@@ -79,3 +79,10 @@ ENTRYPOINT ["entrypoint.sh"]
 #RUN rbenv rehash
 
 EXPOSE 3000
+
+RUN \
+ useradd -m dev; \
+ echo 'dev:dev' | chpasswd; \
+ echo "dev ALL=NOPASSWD: ALL" >> /etc/sudoers
+RUN chown -R dev:dev /home/dev
+USER dev

@@ -5,7 +5,7 @@ ENV APP_NAME sample_app
 ENV LANG C.UTF-8
 ENV APP_PATH /usr/src/${APP_NAME}
 # rbenvのpathを通す
-ENV RBENV_ROOT /usr/local/rbenv
+ENV RBENV_ROOT /home/dev/.rbenv
 ENV PATH ${RBENV_ROOT}/shims:${RBENV_ROOT}/bin:${PATH}
 
 # timezone
@@ -46,6 +46,18 @@ RUN yum -y install \
   postgresql \
   postgresql-devel
 
+# entrypointシェルを設定
+COPY script/entrypoint.sh /usr/bin/
+RUN chmod +x /usr/bin/entrypoint.sh
+ENTRYPOINT ["entrypoint.sh"]
+
+# devユーザー作成
+RUN \
+ useradd -m dev; \
+ echo 'dev:dev' | chpasswd; \
+ echo "dev ALL=NOPASSWD: ALL" >> /etc/sudoers
+USER dev
+
 # rbenvとruby-buildインストール
 RUN git clone https://github.com/sstephenson/rbenv.git ${RBENV_ROOT}
 RUN git clone https://github.com/sstephenson/ruby-build.git ${RBENV_ROOT}/plugins/ruby-build
@@ -53,6 +65,10 @@ RUN git clone https://github.com/sstephenson/ruby-build.git ${RBENV_ROOT}/plugin
 # rbenvを速くするために動的なbash拡張をコンパイルする
 RUN ${RBENV_ROOT}/src/configure
 RUN make -C ${RBENV_ROOT}/src
+
+# シェルにrbenvを設定
+RUN echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
+RUN rbenv init -
 
 # rbenvの確認
 RUN curl -fsSL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-doctor | bash
@@ -68,21 +84,9 @@ RUN gem install bundler
 # アプリケーションソースコードのルートディレクトリへ移動
 WORKDIR ${APP_PATH}
 
-# entrypointのための処理
-COPY script/entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
-
 # bundle install
 #COPY Gemfile* $APP_PATH/
 #RUN bundle install
 #RUN rbenv rehash
 
 EXPOSE 3000
-
-RUN \
- useradd -m dev; \
- echo 'dev:dev' | chpasswd; \
- echo "dev ALL=NOPASSWD: ALL" >> /etc/sudoers
-RUN chown -R dev:dev /home/dev
-USER dev
